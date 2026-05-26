@@ -1,4 +1,4 @@
-import { commonFields, contentFields, settingsFields } from '../common'
+import { contentFields, settingsFields } from '../common'
 
 export const menuBlock = {
   name: 'menuBlock',
@@ -37,31 +37,8 @@ export const menuBlock = {
               name: 'title',
               title: 'Section Title',
               type: 'string',
-              description: 'Name of the section (e.g., "KU-KAI RAMEN", "TOPPINGS")',
+              description: 'Name of the section (e.g., "RAMEN", "DRINKS", "SIDES")',
               validation: (Rule: any) => Rule.required()
-            },
-            {
-              name: 'layout',
-              title: 'Layout',
-              type: 'string',
-              description: 'Featured = top row (Kukai / Vegan). List = full width (Toppings). Half = bottom row (Sides / Drinks).',
-              options: {
-                list: [
-                  { title: 'Featured — top row column', value: 'featured' },
-                  { title: 'List — full width', value: 'list' },
-                  { title: 'Half — bottom row column', value: 'half' },
-                ],
-                layout: 'radio',
-              },
-            },
-            {
-              name: 'image',
-              title: 'Section Photo',
-              type: 'image',
-              description: 'Large photo for featured ramen columns (e.g. bowl photo)',
-              options: {
-                hotspot: true,
-              },
             },
             {
               name: 'items',
@@ -121,6 +98,21 @@ export const menuBlock = {
                 }
               ],
               validation: (Rule: any) => Rule.min(1)
+            },
+            {
+              name: 'illustrations',
+              title: 'Illustrations / SVGs',
+              type: 'array',
+              description: 'Add up to 2 illustrations/SVGs for this section (e.g., for TOPPING section)',
+              of: [
+                {
+                  type: 'image',
+                  options: {
+                    hotspot: true
+                  }
+                }
+              ],
+              validation: (Rule: any) => Rule.max(2)
             }
           ],
           preview: {
@@ -139,11 +131,21 @@ export const menuBlock = {
       ],
       validation: (Rule: any) => Rule.required().min(1)
     },
-
+    
+    // Logo (placed between sections in the grid)
+    {
+      name: 'logo',
+      title: 'Logo',
+      type: 'image',
+      group: 'content',
+      description: 'Logo to display between menu sections (e.g., between DRINKS and SIDES)',
+      options: {
+        hotspot: true
+      }
+    },
+    
     // Component settings
-    ...settingsFields.layout,
-    { ...commonFields.backgroundColor, group: 'settings', initialValue: 'dark' },
-    { ...commonFields.textColor, group: 'settings', initialValue: 'light' },
+    ...settingsFields.layout
   ],
   preview: {
     select: {

@@ -29,7 +29,7 @@ export const useCheckmateFlexSettings = (settings: any) => {
             case 'light':
                 return ['bg-white'];
             case 'dark':
-                return ['bg-menu-bg'];
+                return ['bg-black'];
             case 'primary':
                 return ['bg-primary'];
             case 'secondary':

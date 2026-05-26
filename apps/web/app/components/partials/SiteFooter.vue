@@ -1,5 +1,5 @@
 <template>
-  <footer :class="footerClasses">
+  <footer class="bg-primary text-black">
     <!-- Main Footer Content -->
     <div class="px-8 md:px-16 py-8 md:py-12 max-w-[1480px] mx-auto">
       <div class="flex flex-row md:flex-row items-start md:items-center justify-between gap-4 md:gap-4">
@@ -34,10 +34,10 @@
         <div v-if="footerMenu && footerMenu.length > 0" class="flex flex-col text-right items-end md:items-end">
           <template v-for="(item, index) in footerMenu" :key="index">
             <div :class="index === 0 ? '' : 'mt-2'">
-              <a v-if="item.openInNewTab" class="text-sm uppercase font-medium whitespace-nowrap relative after:absolute after:bottom-[-4px] after:left-0 after:w-full after:h-[1px] after:bg-current after:scale-x-0 after:origin-left after:transition-transform after:duration-300 after:ease-out hover:after:scale-x-100" :class="[footerLinkClasses, isActivePage(item.url) ? 'after:scale-x-100' : '']" :href="item.url" target="_blank" rel="noopener noreferrer">
+              <a v-if="item.openInNewTab" class="text-sm uppercase font-medium text-black whitespace-nowrap relative after:absolute after:bottom-[-4px] after:left-0 after:w-full after:h-[1px] after:bg-current after:scale-x-0 after:origin-left after:transition-transform after:duration-300 after:ease-out hover:after:scale-x-100" :class="[isActivePage(item.url) ? 'after:scale-x-100' : '']" :href="item.url" target="_blank" rel="noopener noreferrer">
                 <span v-html="item.title"></span>
               </a>
-              <nuxt-link v-else class="text-sm uppercase font-medium whitespace-nowrap relative after:absolute after:bottom-[-4px] after:left-0 after:w-full after:h-[1px] after:bg-current after:scale-x-0 after:origin-left after:transition-transform after:duration-300 after:ease-out hover:after:scale-x-100" :class="[footerLinkClasses, isActivePage(item.url) ? 'after:scale-x-100' : '']" :to="item.url">
+              <nuxt-link v-else class="text-sm uppercase font-medium text-black whitespace-nowrap relative after:absolute after:bottom-[-4px] after:left-0 after:w-full after:h-[1px] after:bg-current after:scale-x-0 after:origin-left after:transition-transform after:duration-300 after:ease-out hover:after:scale-x-100" :class="[isActivePage(item.url) ? 'after:scale-x-100' : '']" :to="item.url">
                 <span v-html="item.title"></span>
               </nuxt-link>
             </div>
@@ -51,18 +51,8 @@
 <script setup>
 import {useCoreStore} from "~/stores/core";
 import RamenBowlLogo from '~/components/ui/RamenBowlLogo.vue';
-import { useDarkMenuPage } from '~/composables/useDarkMenuPage';
 
 const coreStore = useCoreStore();
-const { isDarkMenuPage } = useDarkMenuPage();
-
-const footerClasses = computed(() =>
-  isDarkMenuPage.value ? 'bg-menu-bg text-white' : 'bg-primary text-black',
-);
-
-const footerLinkClasses = computed(() =>
-  isDarkMenuPage.value ? 'text-white' : 'text-black',
-);
 const { locale } = useI18n();
 const route = useRoute();
 
