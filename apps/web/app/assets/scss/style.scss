@@ -21,6 +21,8 @@
     -webkit-text-size-adjust: 100%;
     /* Safari scroll behavior */
     -webkit-overflow-scrolling: touch;
+    /* Anchor links / scroll targets below fixed header */
+    scroll-padding-top: 8.125rem;
   }
   
   * {
