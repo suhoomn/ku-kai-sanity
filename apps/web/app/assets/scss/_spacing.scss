@@ -47,9 +47,19 @@ $class-list:(
     }
 }
 
+// Offset page content below fixed site header (menu page, etc.)
+.layout-slot--below-fixed-header {
+  // Header inner padding + logo + room for display headings (1.25× base clearance)
+  padding-top: 7.5rem;
+
+  @media (min-width: 768px) {
+    padding-top: 8.125rem;
+  }
+}
+
 // Eyebrow spacing rule
 .eyebrow {
-    margin-bottom: 1.875rem;
+  margin-bottom: 1.875rem;
 }
 
 // H6 spacing rule
