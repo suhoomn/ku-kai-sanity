@@ -238,11 +238,44 @@ const descriptionTextClasses = computed(() =>
   isDarkBackground.value ? 'text-white/70' : 'text-black/70',
 );
 
+function getMenuSections() {
+  return componentData.value.menuSections || [];
+}
+
+function sectionHasToppingTitle(section) {
+  return /topping/i.test(section.title || '');
+}
+
+/**
+ * CMS `layout` wins when set. Otherwise infer from title/image so Preview works
+ * before Studio schema is deployed on production.
+ */
 function getSectionLayout(section) {
   const layout = section.layout;
   if (layout === 'featured' || layout === 'list' || layout === 'half') {
     return layout;
   }
+
+  const title = (section.title || '').toLowerCase();
+
+  if (section.image) {
+    return 'featured';
+  }
+  if (/topping/.test(title)) {
+    return 'list';
+  }
+  if (/side|drink/.test(title)) {
+    return 'half';
+  }
+  if (/ramen|kukai|ku-kai|vegan/.test(title)) {
+    return 'featured';
+  }
+
+  const sections = getMenuSections();
+  if (sections.some(sectionHasToppingTitle) && !/topping|side|drink/i.test(title)) {
+    return 'featured';
+  }
+
   return null;
 }
 
