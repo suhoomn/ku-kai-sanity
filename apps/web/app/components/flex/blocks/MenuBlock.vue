@@ -63,7 +63,7 @@
 
               <div class="menu-featured__items flex flex-col gap-4 md:gap-5 w-full mt-2 md:mt-4">
                 <div
-                  v-for="(item, itemIndex) in section.items"
+                  v-for="(item, itemIndex) in getFeaturedItems(section)"
                   :key="itemIndex"
                   :class="isVariantMenuItem(item) ? 'menu-featured__variant' : 'menu-featured__base'"
                 >
@@ -283,6 +283,63 @@ const useColumnLayout = computed(() =>
   (componentData.value.menuSections || []).some((section) => getSectionLayout(section) !== null),
 );
 
+function itemTextBlob(item) {
+  return `${item.name || ''} ${formatIngredients(item)} ${item.description || ''}`.toLowerCase();
+}
+
+function isKukaiMenuItem(item) {
+  const blob = itemTextBlob(item);
+
+  if (/vegan|shoyu|tan-tan|tan tan/.test(blob)) {
+    return false;
+  }
+  if (/mushroom broth w\. white sesame|miso-seasoned soy meat|zha cai|beet sprouts/.test(blob)) {
+    return false;
+  }
+  if (/mushroom broth, bamboo shoot|oyster mushroom|purløg|purlog|choy sum/.test(blob)) {
+    return false;
+  }
+  if (/nasturtium|nasturium|shiitake oil|thyme/.test(blob) && !/tonkotsu/.test(blob)) {
+    return false;
+  }
+
+  return true;
+}
+
+function isVeganMenuItem(item) {
+  const blob = itemTextBlob(item);
+  return /vegan|tan-tan|tan tan|mushroom broth w\. white sesame|miso-seasoned soy meat|zha cai|mushroom broth, bamboo shoot|oyster mushroom/.test(
+    blob,
+  );
+}
+
+function withFeaturedItems(section, items, featuredRole) {
+  return {
+    ...section,
+    items,
+    _featuredRole: featuredRole,
+  };
+}
+
+function buildFeaturedEntries(section) {
+  const items = section.items || [];
+  const kukaiItems = items.filter(isKukaiMenuItem);
+  const veganItems = items.filter(isVeganMenuItem);
+
+  if (kukaiItems.length && veganItems.length) {
+    return [
+      { section: withFeaturedItems(section, kukaiItems, 'kukai'), layout: 'featured' },
+      { section: withFeaturedItems(section, veganItems, 'vegan'), layout: 'featured' },
+    ];
+  }
+
+  if (isVeganSection(section)) {
+    return [{ section: withFeaturedItems(section, items, 'vegan'), layout: 'featured' }];
+  }
+
+  return [{ section: withFeaturedItems(section, items, 'kukai'), layout: 'featured' }];
+}
+
 const gridSections = computed(() => {
   const sections = componentData.value.menuSections || [];
   if (!useColumnLayout.value) {
@@ -295,20 +352,38 @@ const gridSections = computed(() => {
     .map((section) => ({ section, layout: getSectionLayout(section) }))
     .filter((entry) => entry.layout);
 
-  const kukai =
+  const orderedFeatured = [];
+  const usedFeatured = new Set();
+
+  const kukaiSection =
     featured.find((section) => /kukai|ku-kai/i.test(section.title || '') && !/vegan/i.test(section.title || '')) ||
     featured.find((section) => !isVeganSection(section));
-  const vegan = featured.find((section) => isVeganSection(section));
+  const veganSection = featured.find((section) => isVeganSection(section) && section !== kukaiSection);
 
-  const orderedFeatured = [];
-  if (kukai) {
-    orderedFeatured.push({ section: kukai, layout: 'featured' });
+  if (kukaiSection) {
+    buildFeaturedEntries(kukaiSection).forEach((entry) => orderedFeatured.push(entry));
+    usedFeatured.add(kukaiSection);
   }
-  if (vegan && vegan !== kukai) {
-    orderedFeatured.push({ section: vegan, layout: 'featured' });
+  if (veganSection) {
+    buildFeaturedEntries(veganSection).forEach((entry) => orderedFeatured.push(entry));
+    usedFeatured.add(veganSection);
   }
 
-  return [...orderedFeatured, ...others];
+  featured.forEach((section) => {
+    if (usedFeatured.has(section)) {
+      return;
+    }
+    buildFeaturedEntries(section).forEach((entry) => orderedFeatured.push(entry));
+  });
+
+  const listEntries = others.filter((entry) => entry.layout === 'list');
+  const halfEntries = others.filter((entry) => entry.layout === 'half');
+
+  return [...orderedFeatured, ...listEntries, ...halfEntries];
+});
+
+function getFeaturedItems(section) {
+  return section.items || [];
 });
 
 function hasIngredients(item) {
@@ -327,6 +402,12 @@ function formatMenuPrice(price) {
 }
 
 function isVeganSection(section) {
+  if (section._featuredRole === 'vegan') {
+    return true;
+  }
+  if (section._featuredRole === 'kukai') {
+    return false;
+  }
   return /vegan/i.test(section.title || '');
 }
 
