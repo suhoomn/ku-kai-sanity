@@ -5,7 +5,7 @@
       :class="contentPaddingClasses"
     >
       <div
-        v-if="!useColumnLayout && (componentData.header || componentData.eyebrow || componentData.subheader)"
+        v-if="!menuHasContent && (componentData.header || componentData.eyebrow || componentData.subheader)"
         class="mb-12 md:mb-16 text-center"
       >
         <p v-if="componentData.eyebrow" class="eyebrow text-sm uppercase mb-4">
@@ -17,191 +17,65 @@
         <div v-if="componentData.subheader" class="text-lg" v-html="componentData.subheader"></div>
       </div>
 
-      <template v-if="componentData.menuSections?.length">
-        <!-- Column grid (Sanity layout: featured | list | half) -->
-        <div
-          v-if="useColumnLayout"
-          class="menu-grid grid grid-cols-1 md:grid-cols-2 gap-y-12 md:gap-x-20 md:gap-y-10"
+      <div v-if="menuHasContent" class="menu-grid grid grid-cols-1 md:grid-cols-2 gap-y-12 md:gap-x-20 md:gap-y-10">
+        <article
+          v-if="menu.kukai"
+          class="menu-grid__featured menu-featured flex flex-col min-h-0"
         >
-          <template
-            v-for="({ section, layout }, sectionIndex) in gridSections"
-            :key="`section-${sectionIndex}-${section.title || layout}`"
-          >
-            <article
-              v-if="layout === 'featured'"
-              class="menu-grid__featured menu-featured flex flex-col min-h-0"
-            >
-              <div class="menu-featured__hero w-full">
-                <h3
-                  class="menu-featured__title text-center text-[#F3EC26] w-full"
-                  :class="isVeganSection(section) ? 'menu-featured__title--vegan' : 'menu-featured__title--kukai font-display'"
-                >
-                  {{ getFeaturedTitle(section) }}
-                </h3>
+          <FeaturedRamen :ramen="menu.kukai" variant="kukai" />
+        </article>
 
-                <div class="menu-featured__photo-wrap w-full flex justify-center">
-                  <div
-                    class="menu-featured__photo"
-                    :class="{ 'menu-featured__photo--placeholder': !section.image }"
-                  >
-                    <CmPicture
-                      v-if="section.image"
-                      :image-object="section.image"
-                      classes="w-full h-full object-cover"
-                      :lazy="true"
-                    />
-                    <img
-                      v-else
-                      :src="getFeaturedPhotoPlaceholder(section)"
-                      :alt="getPhotoPlaceholderLabel(section)"
-                      class="menu-featured__photo-placeholder-image"
-                      loading="lazy"
-                    />
-                  </div>
-                </div>
-              </div>
+        <article
+          v-if="menu.vegan"
+          class="menu-grid__featured menu-featured flex flex-col min-h-0"
+        >
+          <FeaturedRamen :ramen="menu.vegan" variant="vegan" />
+        </article>
 
-              <div class="menu-featured__items flex flex-col gap-4 md:gap-5 w-full mt-2 md:mt-4">
+        <section v-if="menu.toppings.length" class="col-span-1 md:col-span-2 menu-toppings">
+          <div class="menu-toppings__box h-full px-6 py-8 md:px-10 md:py-10" :class="menuBoxClasses">
+            <div class="menu-toppings__inner flex flex-col md:flex-row md:items-start gap-6 md:gap-x-10 md:gap-y-0">
+              <h3 class="menu-toppings__title font-headline shrink-0 uppercase mb-0">TOPPINGS</h3>
+              <div class="menu-toppings__grid flex-1 w-full min-w-0 gap-y-4 gap-x-8 md:gap-x-12">
                 <div
-                  v-for="(item, itemIndex) in getFeaturedItems(section)"
-                  :key="itemIndex"
-                  :class="isVariantMenuItem(item) ? 'menu-featured__variant' : 'menu-featured__base'"
+                  v-for="(item, itemIndex) in menu.toppings"
+                  :key="`topping-${itemIndex}`"
+                  class="menu-toppings__row flex items-baseline justify-between gap-3"
                 >
-                  <div
-                    v-if="hasIngredients(item)"
-                    class="flex items-start justify-between gap-4 md:gap-6"
-                  >
-                    <p class="menu-featured__copy flex-1 leading-snug">
-                      {{ formatIngredients(item) }}
-                    </p>
-                    <span
-                      v-if="item.price"
-                      class="menu-featured__price shrink-0 tabular-nums text-xl font-bold"
-                    >
-                      {{ formatMenuPrice(item.price) }}
-                    </span>
-                  </div>
-
-                  <div
-                    v-else-if="item.name"
-                    class="flex items-start justify-between gap-4 md:gap-6"
-                  >
-                    <span class="menu-item-name text-xl font-bold flex-1 leading-snug">
-                      {{ item.name }}
-                    </span>
-                    <span v-if="item.price" class="menu-featured__price shrink-0 tabular-nums text-xl font-bold">
-                      {{ formatMenuPrice(item.price) }}
-                    </span>
-                  </div>
-
-                  <p v-if="item.description" class="menu-featured__copy mt-1 leading-snug" :class="descriptionTextClasses">
-                    {{ item.description }}
-                  </p>
-                </div>
-              </div>
-            </article>
-
-            <section v-else-if="layout === 'list'" class="col-span-1 md:col-span-2 menu-toppings">
-              <div class="menu-toppings__box h-full px-6 py-8 md:px-10 md:py-10" :class="menuBoxClasses">
-                <div class="menu-toppings__inner flex flex-col md:flex-row md:items-start gap-6 md:gap-x-10 md:gap-y-0">
-                  <h3 class="menu-toppings__title font-headline shrink-0 uppercase mb-0">
-                    {{ getToppingsTitle(section) }}
-                  </h3>
-
-                  <div class="menu-toppings__grid flex-1 w-full min-w-0 gap-y-4 gap-x-8 md:gap-x-12">
-                    <div
-                      v-for="(item, itemIndex) in section.items"
-                      :key="itemIndex"
-                      class="menu-toppings__row flex items-baseline justify-between gap-3"
-                    >
-                      <span class="menu-item-name text-xl font-bold">{{ item.name }}</span>
-                      <span v-if="item.price" class="menu-toppings__item-price shrink-0 tabular-nums text-xl font-bold">
-                        {{ formatMenuPrice(item.price) }}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            <section v-else-if="layout === 'half'" class="menu-grid__half min-h-0">
-              <div
-                class="border rounded-lg px-6 py-8 md:px-8 md:py-10 h-full flex flex-col"
-                :class="menuBoxClasses"
-              >
-                <h3 class="text-2xl md:text-3xl font-display uppercase tracking-wide text-[#F3EC26] mb-6 md:mb-8">
-                  {{ section.title }}
-                </h3>
-
-                <div class="flex flex-col gap-4 flex-1">
-                  <div
-                    v-for="(item, itemIndex) in section.items"
-                    :key="itemIndex"
-                    class="flex flex-col gap-1"
-                  >
-                    <div class="flex items-baseline justify-between gap-4">
-                      <span class="menu-item-name text-xl font-bold flex-1">{{ item.name }}</span>
-                      <span v-if="item.price" class="text-xl font-bold shrink-0 tabular-nums">
-                        {{ formatMenuPrice(item.price) }}
-                      </span>
-                    </div>
-                    <p
-                      v-if="hasIngredients(item)"
-                      class="menu-item-detail text-base leading-relaxed"
-                      :class="mutedTextClasses"
-                    >
-                      {{ formatIngredients(item) }}
-                    </p>
-                    <p v-if="item.description" class="menu-item-detail text-base" :class="descriptionTextClasses">
-                      {{ item.description }}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </section>
-          </template>
-        </div>
-
-        <!-- Fallback: sections without layout field (stacked cards) -->
-        <div v-else class="flex flex-col gap-8 md:gap-10">
-          <section
-            v-for="(section, sectionIndex) in componentData.menuSections"
-            :key="sectionIndex"
-            class="border rounded-lg px-6 py-8 md:px-8 md:py-10"
-            :class="menuBoxClasses"
-          >
-            <h3 class="text-2xl md:text-3xl font-display uppercase tracking-wide text-[#F3EC26] mb-6">
-              {{ section.title }}
-            </h3>
-            <div class="flex flex-col gap-4">
-              <div
-                v-for="(item, itemIndex) in section.items"
-                :key="itemIndex"
-                class="flex flex-col gap-1"
-              >
-                <div class="flex items-baseline justify-between gap-4">
-                  <span class="menu-item-name text-xl font-bold flex-1">{{ item.name }}</span>
-                  <span v-if="item.price" class="text-xl font-bold shrink-0 tabular-nums">
+                  <span class="menu-item-name text-xl font-bold">{{ item.name }}</span>
+                  <span v-if="item.price" class="menu-toppings__item-price shrink-0 tabular-nums text-xl font-bold">
                     {{ formatMenuPrice(item.price) }}
                   </span>
                 </div>
-                <p v-if="hasIngredients(item)" class="menu-item-detail text-base" :class="mutedTextClasses">
-                  {{ formatIngredients(item) }}
-                </p>
-                <p v-if="item.description" class="menu-item-detail text-base" :class="descriptionTextClasses">
-                  {{ item.description }}
-                </p>
               </div>
             </div>
-          </section>
-        </div>
-      </template>
+          </div>
+        </section>
+
+        <section v-if="menu.sides.length" class="menu-grid__half min-h-0">
+          <div class="border rounded-lg px-6 py-8 md:px-8 md:py-10 h-full flex flex-col" :class="menuBoxClasses">
+            <h3 class="text-2xl md:text-3xl font-display uppercase tracking-wide text-[#F3EC26] mb-6 md:mb-8">SIDES</h3>
+            <MenuLineItemList :items="menu.sides" :muted-classes="mutedTextClasses" />
+          </div>
+        </section>
+
+        <section v-if="menu.drinks.length" class="menu-grid__half min-h-0">
+          <div class="border rounded-lg px-6 py-8 md:px-8 md:py-10 h-full flex flex-col" :class="menuBoxClasses">
+            <h3 class="text-2xl md:text-3xl font-display uppercase tracking-wide text-[#F3EC26] mb-6 md:mb-8">DRINKS</h3>
+            <MenuLineItemList :items="menu.drinks" :muted-classes="mutedTextClasses" />
+          </div>
+        </section>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
+import { computed } from 'vue';
 import { useCheckmateFlexSettings } from '~/composables/checkmateFlexSettings';
+import { normalizeMenuBlockData, menuHasContent as checkMenuHasContent } from '~/composables/useMenuBlockData';
+import FeaturedRamen from '~/components/flex/blocks/menu/FeaturedRamen.vue';
+import MenuLineItemList from '~/components/flex/blocks/menu/MenuLineItemList.vue';
 
 const props = defineProps({
   data: {
@@ -215,6 +89,10 @@ const props = defineProps({
 });
 
 const componentData = computed(() => props.data);
+
+const menu = computed(() => normalizeMenuBlockData(componentData.value));
+
+const menuHasContent = computed(() => checkMenuHasContent(menu.value));
 
 const flexSettings = computed(() => ({
   ...componentData.value,
@@ -234,218 +112,11 @@ const mutedTextClasses = computed(() =>
   isDarkBackground.value ? 'text-white/90' : 'text-black/85',
 );
 
-const descriptionTextClasses = computed(() =>
-  isDarkBackground.value ? 'text-white/70' : 'text-black/70',
-);
-
-function getMenuSections() {
-  return componentData.value.menuSections || [];
-}
-
-function sectionHasToppingTitle(section) {
-  return /topping/i.test(section.title || '');
-}
-
-/**
- * CMS `layout` wins when set. Otherwise infer from title/image so Preview works
- * before Studio schema is deployed on production.
- */
-function getSectionLayout(section) {
-  const layout = section.layout;
-  if (layout === 'featured' || layout === 'list' || layout === 'half') {
-    return layout;
-  }
-
-  const title = (section.title || '').toLowerCase();
-
-  if (section.image) {
-    return 'featured';
-  }
-  if (/topping/.test(title)) {
-    return 'list';
-  }
-  if (/side|drink/.test(title)) {
-    return 'half';
-  }
-  if (/ramen|kukai|ku-kai|vegan/.test(title)) {
-    return 'featured';
-  }
-
-  const sections = getMenuSections();
-  if (sections.some(sectionHasToppingTitle) && !/topping|side|drink/i.test(title)) {
-    return 'featured';
-  }
-
-  return null;
-}
-
-const useColumnLayout = computed(() =>
-  (componentData.value.menuSections || []).some((section) => getSectionLayout(section) !== null),
-);
-
-function itemTextBlob(item) {
-  return `${item.name || ''} ${formatIngredients(item)} ${item.description || ''}`.toLowerCase();
-}
-
-function isKukaiMenuItem(item) {
-  const blob = itemTextBlob(item);
-
-  if (/vegan|shoyu|tan-tan|tan tan/.test(blob)) {
-    return false;
-  }
-  if (/mushroom broth w\. white sesame|miso-seasoned soy meat|zha cai|beet sprouts/.test(blob)) {
-    return false;
-  }
-  if (/mushroom broth, bamboo shoot|oyster mushroom|purløg|purlog|choy sum/.test(blob)) {
-    return false;
-  }
-  if (/nasturtium|nasturium|shiitake oil|thyme/.test(blob) && !/tonkotsu/.test(blob)) {
-    return false;
-  }
-
-  return true;
-}
-
-function isVeganMenuItem(item) {
-  const blob = itemTextBlob(item);
-  return /vegan|tan-tan|tan tan|mushroom broth w\. white sesame|miso-seasoned soy meat|zha cai|mushroom broth, bamboo shoot|oyster mushroom/.test(
-    blob,
-  );
-}
-
-function withFeaturedItems(section, items, featuredRole) {
-  return {
-    ...section,
-    items,
-    _featuredRole: featuredRole,
-  };
-}
-
-function buildFeaturedEntries(section) {
-  const items = section.items || [];
-  const kukaiItems = items.filter(isKukaiMenuItem);
-  const veganItems = items.filter(isVeganMenuItem);
-
-  if (kukaiItems.length && veganItems.length) {
-    return [
-      { section: withFeaturedItems(section, kukaiItems, 'kukai'), layout: 'featured' },
-      { section: withFeaturedItems(section, veganItems, 'vegan'), layout: 'featured' },
-    ];
-  }
-
-  if (isVeganSection(section)) {
-    return [{ section: withFeaturedItems(section, items, 'vegan'), layout: 'featured' }];
-  }
-
-  return [{ section: withFeaturedItems(section, items, 'kukai'), layout: 'featured' }];
-}
-
-const gridSections = computed(() => {
-  const sections = componentData.value.menuSections || [];
-  if (!useColumnLayout.value) {
-    return [];
-  }
-
-  const featured = sections.filter((section) => getSectionLayout(section) === 'featured');
-  const others = sections
-    .filter((section) => getSectionLayout(section) !== 'featured')
-    .map((section) => ({ section, layout: getSectionLayout(section) }))
-    .filter((entry) => entry.layout);
-
-  const orderedFeatured = [];
-  const usedFeatured = new Set();
-
-  const kukaiSection =
-    featured.find((section) => /kukai|ku-kai/i.test(section.title || '') && !/vegan/i.test(section.title || '')) ||
-    featured.find((section) => !isVeganSection(section));
-  const veganSection = featured.find((section) => isVeganSection(section) && section !== kukaiSection);
-
-  if (kukaiSection) {
-    buildFeaturedEntries(kukaiSection).forEach((entry) => orderedFeatured.push(entry));
-    usedFeatured.add(kukaiSection);
-  }
-  if (veganSection) {
-    buildFeaturedEntries(veganSection).forEach((entry) => orderedFeatured.push(entry));
-    usedFeatured.add(veganSection);
-  }
-
-  featured.forEach((section) => {
-    if (usedFeatured.has(section)) {
-      return;
-    }
-    buildFeaturedEntries(section).forEach((entry) => orderedFeatured.push(entry));
-  });
-
-  const listEntries = others.filter((entry) => entry.layout === 'list');
-  const halfEntries = others.filter((entry) => entry.layout === 'half');
-
-  return [...orderedFeatured, ...listEntries, ...halfEntries];
-});
-
-function getFeaturedItems(section) {
-  return section.items || [];
-}
-
-function hasIngredients(item) {
-  return Array.isArray(item.ingredients) && item.ingredients.length > 0;
-}
-
-function formatIngredients(item) {
-  return item.ingredients.join(', ');
-}
-
 function formatMenuPrice(price) {
   if (!price) {
     return '';
   }
   return String(price).replace(/\s*kr\.?\s*/gi, '');
-}
-
-function isVeganSection(section) {
-  if (section._featuredRole === 'vegan') {
-    return true;
-  }
-  if (section._featuredRole === 'kukai') {
-    return false;
-  }
-  return /vegan/i.test(section.title || '');
-}
-
-function getFeaturedTitle(section) {
-  if (isVeganSection(section)) {
-    return section.title?.trim() || 'Vegan tan-tan men';
-  }
-
-  const title = section.title?.trim();
-  if (!title || /^ramen$/i.test(title) || /^ku[- ]?kai(\s+ramen)?$/i.test(title)) {
-    return 'KU-KAI RAMEN';
-  }
-
-  return title;
-}
-
-function getToppingsTitle(section) {
-  const title = section.title?.trim();
-  return title ? title.toUpperCase() : 'TOPPINGS';
-}
-
-const FEATURED_PHOTO_PLACEHOLDERS = {
-  kukai: '/images/menu/kukai-ramen.png',
-  vegan: '/images/menu/vegan-ramen.png',
-};
-
-function getFeaturedPhotoPlaceholder(section) {
-  return isVeganSection(section)
-    ? FEATURED_PHOTO_PLACEHOLDERS.vegan
-    : FEATURED_PHOTO_PLACEHOLDERS.kukai;
-}
-
-function getPhotoPlaceholderLabel(section) {
-  return isVeganSection(section) ? 'Vegan ramen' : 'Kū-Kai ramen';
-}
-
-function isVariantMenuItem(item) {
-  return Boolean(item.name?.trim().startsWith('+'));
 }
 
 const containerClasses = computed(() => {
@@ -463,7 +134,7 @@ const containerClasses = computed(() => {
 });
 
 const contentPaddingClasses = computed(() => {
-  if (useColumnLayout.value) {
+  if (menuHasContent.value) {
     return 'pb-8 md:pb-16';
   }
 

@@ -1,162 +1,174 @@
 import { commonFields, contentFields, settingsFields } from '../common'
 
+export const menuFeaturedRamen = {
+  type: 'object',
+  name: 'menuFeaturedRamen',
+  title: 'Featured ramen',
+  fields: [
+    {
+      name: 'title',
+      title: 'Title',
+      type: 'string',
+      description: 'Shown above the photo (e.g. KU-KAI RAMEN)',
+    },
+    {
+      name: 'image',
+      title: 'Photo',
+      type: 'image',
+      options: { hotspot: true },
+    },
+    {
+      name: 'price',
+      title: 'Price',
+      type: 'string',
+      description: 'e.g. 150,-',
+      validation: (Rule: any) => Rule.required(),
+    },
+    {
+      name: 'ingredients',
+      title: 'Ingredients',
+      type: 'array',
+      description: 'One ingredient per line (shown as a comma-separated list on the site)',
+      of: [{ type: 'string' }],
+    },
+    {
+      name: 'addOnName',
+      title: 'Add-on name (optional)',
+      type: 'string',
+      description: 'e.g. + Marinaded egg & Seaweed (Nori)',
+    },
+    {
+      name: 'addOnPrice',
+      title: 'Add-on price',
+      type: 'string',
+      description: 'e.g. 185,-',
+    },
+  ],
+  preview: {
+    select: { title: 'title', price: 'price', media: 'image' },
+    prepare({ title, price, media }: any) {
+      return {
+        title: title || 'Ramen',
+        subtitle: price || 'No price',
+        media,
+      }
+    },
+  },
+}
+
+export const menuLineItem = {
+  type: 'object',
+  name: 'menuLineItem',
+  title: 'Menu item',
+  fields: [
+    {
+      name: 'name',
+      title: 'Name',
+      type: 'string',
+      validation: (Rule: any) => Rule.required(),
+    },
+    {
+      name: 'price',
+      title: 'Price',
+      type: 'string',
+      description: 'e.g. 30,-',
+      validation: (Rule: any) => Rule.required(),
+    },
+    {
+      name: 'ingredients',
+      title: 'Ingredients / details (optional)',
+      type: 'array',
+      of: [{ type: 'string' }],
+      description: 'Optional. Use for extra lines (e.g. toppings note). Drinks can use Note instead.',
+    },
+    {
+      name: 'note',
+      title: 'Note (optional)',
+      type: 'string',
+      description: 'e.g. refill free — mainly for drinks',
+    },
+  ],
+  preview: {
+    select: { title: 'name', price: 'price' },
+    prepare({ title, price }: any) {
+      return {
+        title: title || 'Untitled',
+        subtitle: price || '',
+      }
+    },
+  },
+}
+
 export const menuBlock = {
   name: 'menuBlock',
   title: 'Menu Block',
   type: 'object',
-  description: 'Display a menu with sections (RAMEN, DRINKS, SIDES) that can be reordered. Each section contains items with prices and ingredients.',
+  description:
+    'Edit the restaurant menu: two ramen columns (with photos), then toppings, sides, and drinks.',
   groups: [
-    {
-      name: 'content',
-      title: 'Content',
-      default: true
-    },
-    {
-      name: 'settings',
-      title: 'Settings',
-    }
+    { name: 'content', title: 'Menu', default: true },
+    { name: 'settings', title: 'Settings' },
   ],
   fields: [
-    // Headers
     ...contentFields.headers,
-    
-    // Menu Sections
+
     {
-      name: 'menuSections',
-      title: 'Menu Sections',
+      name: 'kukaiRamen',
+      title: 'Kū-Kai ramen',
+      type: 'menuFeaturedRamen',
+      group: 'content',
+      options: { collapsible: true, collapsed: false },
+    },
+    {
+      name: 'veganRamen',
+      title: 'Vegan ramen',
+      type: 'menuFeaturedRamen',
+      group: 'content',
+      options: { collapsible: true, collapsed: false },
+    },
+    {
+      name: 'toppings',
+      title: 'Toppings',
       type: 'array',
       group: 'content',
-      description: 'Add menu sections (e.g., RAMEN, DRINKS, SIDES). You can reorder them by dragging.',
-      of: [
-        {
-          type: 'object',
-          name: 'menuSection',
-          title: 'Menu Section',
-          fields: [
-            {
-              name: 'title',
-              title: 'Section Title',
-              type: 'string',
-              description: 'Name of the section (e.g., "KU-KAI RAMEN", "TOPPINGS")',
-              validation: (Rule: any) => Rule.required()
-            },
-            {
-              name: 'layout',
-              title: 'Layout',
-              type: 'string',
-              description: 'Featured = top row (Kukai / Vegan). List = full width (Toppings). Half = bottom row (Sides / Drinks).',
-              options: {
-                list: [
-                  { title: 'Featured — top row column', value: 'featured' },
-                  { title: 'List — full width', value: 'list' },
-                  { title: 'Half — bottom row column', value: 'half' },
-                ],
-                layout: 'radio',
-              },
-            },
-            {
-              name: 'image',
-              title: 'Section Photo',
-              type: 'image',
-              description: 'Large photo for featured ramen columns (e.g. bowl photo)',
-              options: {
-                hotspot: true,
-              },
-            },
-            {
-              name: 'items',
-              title: 'Menu Items',
-              type: 'array',
-              description: 'Items in this section',
-              of: [
-                {
-                  type: 'object',
-                  name: 'menuItem',
-                  title: 'Menu Item',
-                  fields: [
-                    {
-                      name: 'name',
-                      title: 'Item Name',
-                      type: 'string',
-                      description: 'Name of the menu item',
-                      validation: (Rule: any) => Rule.required()
-                    },
-                    {
-                      name: 'price',
-                      title: 'Price',
-                      type: 'string',
-                      description: 'Price (e.g., "100,-", "50,-")',
-                      validation: (Rule: any) => Rule.required()
-                    },
-                    {
-                      name: 'ingredients',
-                      title: 'Ingredients',
-                      type: 'array',
-                      description: 'List of ingredients (optional)',
-                      of: [
-                        {
-                          type: 'string'
-                        }
-                      ]
-                    },
-                    {
-                      name: 'description',
-                      title: 'Description',
-                      type: 'text',
-                      description: 'Optional description for this item'
-                    }
-                  ],
-                  preview: {
-                    select: {
-                      title: 'name',
-                      price: 'price'
-                    },
-                    prepare({ title, price }: any) {
-                      return {
-                        title: title || 'Untitled',
-                        subtitle: price ? `Price: ${price}` : 'No price'
-                      }
-                    }
-                  }
-                }
-              ],
-              validation: (Rule: any) => Rule.min(1)
-            }
-          ],
-          preview: {
-            select: {
-              title: 'title',
-              items: 'items'
-            },
-            prepare({ title, items }: any) {
-              return {
-                title: title || 'Untitled Section',
-                subtitle: items ? `${items.length} item${items.length !== 1 ? 's' : ''}` : 'No items'
-              }
-            }
-          }
-        }
-      ],
-      validation: (Rule: any) => Rule.required().min(1)
+      of: [menuLineItem],
+      options: { sortable: true },
+    },
+    {
+      name: 'sides',
+      title: 'Sides',
+      type: 'array',
+      group: 'content',
+      of: [menuLineItem],
+      options: { sortable: true },
+    },
+    {
+      name: 'drinks',
+      title: 'Drinks',
+      type: 'array',
+      group: 'content',
+      of: [menuLineItem],
+      options: { sortable: true },
     },
 
-    // Component settings
     ...settingsFields.layout,
     { ...commonFields.backgroundColor, group: 'settings', initialValue: 'dark' },
     { ...commonFields.textColor, group: 'settings', initialValue: 'light' },
   ],
   preview: {
     select: {
-      title: 'header',
-      sections: 'menuSections'
+      kukai: 'kukaiRamen.price',
+      vegan: 'veganRamen.price',
+      toppings: 'toppings',
     },
-    prepare({ title, sections }: any) {
+    prepare({ kukai, vegan, toppings }: any) {
+      const count = toppings?.length || 0
       return {
-        title: title || 'Menu Block',
-        subtitle: sections ? `${sections.length} section${sections.length !== 1 ? 's' : ''}` : 'No sections'
+        title: 'Menu',
+        subtitle: [kukai && `Kū-Kai ${kukai}`, vegan && `Vegan ${vegan}`, count && `${count} toppings`]
+          .filter(Boolean)
+          .join(' · '),
       }
-    }
-  }
+    },
+  },
 }
-
-

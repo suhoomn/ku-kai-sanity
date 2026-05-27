@@ -59,6 +59,18 @@ export const structure = (S: StructureBuilder) => {
           )
       ),
       
+      // Opens the site menu page directly (slug: menu). On production this document exists;
+      // development is often empty — use Pages or switch dataset to production to see live content.
+      S.listItem()
+        .id('restaurant-menu-page')
+        .title('Restaurant menu (edit)')
+        .child(
+          S.document()
+            .schemaType('page')
+            .documentId('9272839e-8f21-4f6e-84e5-6e9fca8882ca')
+            .title('Menu')
+        ),
+
       // Divider before media
       S.divider(),
       

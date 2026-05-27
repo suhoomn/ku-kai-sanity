@@ -24,6 +24,8 @@ export const schemaTypes = [
   blocks.accordionBlock,
   blocks.textAndImageBlock,
   blocks.foodSliderBlock,
+  blocks.menuFeaturedRamen,
+  blocks.menuLineItem,
   blocks.menuBlock,
   blocks.imageGridBlock
 ]
