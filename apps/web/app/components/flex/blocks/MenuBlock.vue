@@ -384,7 +384,7 @@ const gridSections = computed(() => {
 
 function getFeaturedItems(section) {
   return section.items || [];
-});
+}
 
 function hasIngredients(item) {
   return Array.isArray(item.ingredients) && item.ingredients.length > 0;
