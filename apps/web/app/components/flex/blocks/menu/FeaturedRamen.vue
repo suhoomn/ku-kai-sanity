@@ -7,20 +7,12 @@
       {{ ramen.title }}
     </h3>
 
-    <div class="menu-featured__photo-wrap w-full flex justify-center">
-      <div class="menu-featured__photo" :class="{ 'menu-featured__photo--placeholder': !ramen.image }">
+    <div v-if="ramen.image" class="menu-featured__photo-wrap w-full flex justify-center">
+      <div class="menu-featured__photo">
         <CmPicture
-          v-if="ramen.image"
           :image-object="ramen.image"
           classes="w-full h-full object-cover"
           :lazy="true"
-        />
-        <img
-          v-else
-          :src="placeholderSrc"
-          :alt="variant === 'vegan' ? 'Vegan ramen' : 'Kū-Kai ramen'"
-          class="menu-featured__photo-placeholder-image"
-          loading="lazy"
         />
       </div>
     </div>
@@ -59,15 +51,6 @@ const props = defineProps({
     required: true,
   },
 });
-
-const placeholders = {
-  kukai: '/images/menu/kukai-ramen.png',
-  vegan: '/images/menu/vegan-ramen.png',
-};
-
-const placeholderSrc = computed(() =>
-  props.variant === 'vegan' ? placeholders.vegan : placeholders.kukai,
-);
 
 const ingredientsText = computed(() =>
   (props.ramen.ingredients || []).filter(Boolean).join(', '),

@@ -72,6 +72,35 @@ function isVeganMenuItem(item: { name?: string; ingredients?: string[]; descript
   )
 }
 
+/** Old CMS stored all toppings in one item's ingredients list — expand for the grid UI. */
+function expandLegacyToppingItems(item: {
+  name?: string
+  price?: string
+  ingredients?: string[]
+  description?: string
+}): MenuLineItem[] {
+  const name = item.name?.trim() || ''
+  const lines = (item.ingredients || []).map((line) => line.trim()).filter(Boolean)
+
+  if (!/topping/i.test(name) || lines.length <= 1) {
+    const single = lineItemFromLegacy(item)
+    return single ? [single] : []
+  }
+
+  return lines
+    .map((line) => {
+      const match = line.match(/^(.+?)\s+(\d+)\s*kr[,.]?\s*-?/i)
+      if (match) {
+        return {
+          name: match[1].replace(/\s*★.*$/i, '').trim(),
+          price: `${match[2]},-`,
+        }
+      }
+      return { name: line.replace(/\s*★.*$/i, '').trim(), price: '' }
+    })
+    .filter((row) => row.name) as MenuLineItem[]
+}
+
 function lineItemFromLegacy(item: {
   name?: string
   price?: string
@@ -187,10 +216,11 @@ function legacyFromSections(sections: unknown[]): NormalizedMenuBlock {
 
     if (/topping/.test(title)) {
       items.forEach((item) => {
-        const line = lineItemFromLegacy(item)
-        if (line?.name) {
-          empty.toppings.push(line)
-        }
+        expandLegacyToppingItems(item).forEach((line) => {
+          if (line.name) {
+            empty.toppings.push(line)
+          }
+        })
       })
       continue
     }
