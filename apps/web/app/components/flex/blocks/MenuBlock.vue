@@ -17,17 +17,17 @@
         <div v-if="componentData.subheader" class="text-lg" v-html="componentData.subheader"></div>
       </div>
 
-      <div v-if="menuHasContent" class="menu-grid grid grid-cols-1 md:grid-cols-2 gap-y-12 md:gap-x-20 md:gap-y-10">
+      <div v-if="menuHasContent" class="menu-grid grid grid-cols-1 md:grid-cols-2 gap-y-14 md:gap-x-16 md:gap-y-6">
         <article
           v-if="menu.kukai"
-          class="menu-grid__featured menu-featured flex flex-col min-h-0"
+          class="menu-grid__featured menu-featured flex flex-col overflow-visible"
         >
           <FeaturedRamen :ramen="menu.kukai" variant="kukai" />
         </article>
 
         <article
           v-if="menu.vegan"
-          class="menu-grid__featured menu-featured flex flex-col min-h-0"
+          class="menu-grid__featured menu-featured flex flex-col overflow-visible"
         >
           <FeaturedRamen :ramen="menu.vegan" variant="vegan" />
         </article>
@@ -127,7 +127,7 @@ const containerClasses = computed(() => {
   }
 
   if (!componentData.value.customPadding) {
-    classes.push('py-16');
+    classes.push(menuHasContent.value ? 'pt-0 pb-10 md:pb-12' : 'py-16');
   }
 
   return classes.join(' ');
@@ -135,7 +135,7 @@ const containerClasses = computed(() => {
 
 const contentPaddingClasses = computed(() => {
   if (menuHasContent.value) {
-    return 'pb-8 md:pb-16';
+    return props.index === 0 ? 'pt-[5.25rem] pb-6 md:pt-[5.75rem] md:pb-10' : 'pb-6 md:pb-10';
   }
 
   if (props.index === 0) {
@@ -148,89 +148,131 @@ const contentPaddingClasses = computed(() => {
 
 <style scoped>
 .menu-grid {
-  --menu-title-min: 1.75rem;
-  --menu-title-fluid: 4vw;
+  --menu-title-min: 1.5rem;
+  --menu-title-fluid: 3.2vw;
   --menu-title-max: 4rem;
   --menu-topping-title-min: 1.5rem;
   --menu-topping-title-fluid: 2.75vw;
   --menu-topping-title-max: 2.938rem;
-  --menu-photo-max-width: 28.125rem;
+  --menu-photo-min: 21rem;
+  --menu-photo-max-width: 33rem;
   --menu-photo-ratio: 585 / 524;
-  --menu-photo-fluid: 30vw;
-  --menu-featured-photo-overlap: clamp(2.75rem, 7vw, 4.5rem);
+  --menu-photo-fluid: 36vw;
+  --menu-featured-title-photo-overlap: 20px;
+  --menu-featured-visual-lift: 0rem;
+  --menu-featured-items-gap: 1.25rem;
+  overflow: visible;
 }
 
-.menu-featured__hero {
+.menu-grid__featured {
+  overflow: visible;
+  isolation: isolate;
+}
+
+@media (max-width: 767px) {
+  .menu-grid {
+    --menu-photo-min: 13rem;
+    --menu-photo-max-width: 17.5rem;
+    --menu-photo-fluid: 72vw;
+    --menu-title-fluid: 5.5vw;
+    --menu-featured-items-gap: 1.5rem;
+  }
+
+  .menu-grid__featured {
+    padding-bottom: 0.5rem;
+  }
+
+  .menu-grid :deep(.menu-featured__hero) {
+    margin-bottom: 0.75rem;
+  }
+
+  .menu-grid :deep(.menu-featured__items) {
+    max-width: none;
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .menu-grid {
+    --menu-featured-visual-lift: 8rem;
+    --menu-featured-items-gap: 1.5rem;
+  }
+}
+
+.menu-grid :deep(.menu-featured__hero) {
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 100%;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.25rem;
+  overflow: visible;
 }
 
-.menu-featured__title {
+.menu-grid :deep(.menu-featured__visual) {
+  width: 100%;
+  margin-top: calc(-1 * var(--menu-featured-visual-lift));
+  margin-bottom: 0;
+  overflow: visible;
+}
+
+.menu-grid :deep(.menu-featured__title) {
   position: relative;
-  z-index: 2;
+  z-index: 3;
   text-align: center;
   font-size: clamp(var(--menu-title-min), var(--menu-title-fluid), var(--menu-title-max));
   line-height: 0.95;
-  margin-bottom: 0;
-  text-shadow: 0 0 18.3px #000000;
+  margin: 0;
+  padding-bottom: 0.125rem;
+  text-shadow:
+    0 0 18px #000,
+    0 2px 8px rgba(0, 0, 0, 0.85);
 }
 
-.menu-featured__title--kukai {
+.menu-grid :deep(.menu-featured__title--kukai) {
   letter-spacing: 0.02em;
   text-transform: uppercase;
 }
 
-.menu-featured__title--vegan {
+.menu-grid :deep(.menu-featured__title--vegan) {
   font-family: 'Yuji Boku', serif;
   font-weight: 300;
   letter-spacing: 0.01em;
   text-transform: none;
 }
 
-.menu-featured__photo-wrap {
+.menu-grid :deep(.menu-featured__photo-wrap) {
   position: relative;
   z-index: 1;
   display: flex;
   justify-content: center;
   width: 100%;
-  margin-top: calc(-1 * var(--menu-featured-photo-overlap, 3.5rem) + 45px);
-  margin-bottom: 0.25rem;
+  margin-top: calc(-1 * var(--menu-featured-title-photo-overlap));
+  margin-bottom: 1rem;
+  overflow: visible;
 }
 
-.menu-featured__photo {
+.menu-grid :deep(.menu-featured__photo) {
   width: min(
     100%,
-    clamp(17.5rem, var(--menu-photo-fluid, 38vw), var(--menu-photo-max-width, 36.5625rem))
+    clamp(var(--menu-photo-min), var(--menu-photo-fluid), var(--menu-photo-max-width))
   );
-  aspect-ratio: var(--menu-photo-ratio, 585 / 524);
-  height: auto;
-  overflow: hidden;
-  flex-shrink: 0;
-}
-
-.menu-featured__photo--placeholder {
-  aspect-ratio: auto;
   height: auto;
   overflow: visible;
-  background: transparent;
-  width: min(
-    100%,
-    clamp(14rem, var(--menu-photo-fluid, 30vw), var(--menu-photo-max-width, 28.125rem))
-  );
+  flex-shrink: 0;
+  line-height: 0;
 }
 
-.menu-featured__photo-placeholder-image {
+.menu-grid :deep(.menu-featured__photo picture),
+.menu-grid :deep(.menu-featured__photo img) {
   display: block;
   width: 100%;
   height: auto;
-  background: transparent;
+  object-fit: contain;
 }
 
-.menu-featured__copy {
+.menu-grid :deep(.menu-featured__copy) {
   font-family: var(--theme-font_paragraph_font_family, 'Roboto', sans-serif);
   font-size: 0.875rem;
   font-weight: 400;
@@ -239,7 +281,7 @@ const contentPaddingClasses = computed(() => {
 }
 
 @media (min-width: 768px) {
-  .menu-featured__copy {
+  .menu-grid :deep(.menu-featured__copy) {
     font-size: 1rem;
   }
 }
@@ -249,7 +291,7 @@ const contentPaddingClasses = computed(() => {
   line-height: 1.45;
 }
 
-.menu-featured__price {
+.menu-grid :deep(.menu-featured__price) {
   font-family: var(--theme-font_paragraph_font_family, 'Roboto', sans-serif);
   color: rgba(255, 255, 255, 0.95);
   padding-top: 0.125rem;
@@ -260,12 +302,16 @@ const contentPaddingClasses = computed(() => {
   line-height: 1.4;
 }
 
-.menu-featured__items {
+.menu-grid :deep(.menu-featured__items) {
+  position: relative;
+  z-index: 2;
+  width: 100%;
   max-width: 26rem;
+  margin-top: var(--menu-featured-items-gap);
 }
 
 @media (min-width: 768px) {
-  .menu-featured__items {
+  .menu-grid :deep(.menu-featured__items) {
     max-width: none;
   }
 }

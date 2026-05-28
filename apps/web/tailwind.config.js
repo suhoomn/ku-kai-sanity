@@ -78,7 +78,8 @@ module.exports = {
         fontFamily: {
           'display': 'var(--theme-font_display_font_family)',
           'headline': 'var(--theme-font_headlines_font_family)',
-          'body': 'var(--theme-font_paragraph_font_family)'
+          'body': 'var(--theme-font_paragraph_font_family)',
+          'yuji': ['"Yuji Boku"', 'serif'],
         },
         fontWeight: {
           extraBold: 800,

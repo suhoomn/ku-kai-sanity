@@ -1,23 +1,29 @@
 <template>
   <div class="menu-featured__hero w-full">
-    <h3
-      class="menu-featured__title text-center text-[#F3EC26] w-full"
-      :class="variant === 'vegan' ? 'menu-featured__title--vegan' : 'menu-featured__title--kukai font-display'"
-    >
-      {{ ramen.title }}
-    </h3>
+    <div class="menu-featured__visual w-full">
+      <h3
+        class="menu-featured__title text-center text-[#F3EC26] w-full"
+        :class="
+          variant === 'vegan'
+            ? 'menu-featured__title--vegan font-yuji'
+            : 'menu-featured__title--kukai font-display'
+        "
+      >
+        {{ ramen.title }}
+      </h3>
 
-    <div v-if="ramen.image" class="menu-featured__photo-wrap w-full flex justify-center">
-      <div class="menu-featured__photo">
-        <CmPicture
-          :image-object="ramen.image"
-          classes="w-full h-full object-cover"
-          :lazy="true"
-        />
+      <div v-if="ramen.image" class="menu-featured__photo-wrap w-full flex justify-center">
+        <div class="menu-featured__photo">
+          <CmPicture
+            :image-object="ramen.image"
+            classes="w-full h-auto object-contain"
+            :lazy="true"
+          />
+        </div>
       </div>
     </div>
 
-    <div class="menu-featured__items flex flex-col gap-4 md:gap-5 w-full mt-2 md:mt-4">
+    <div class="menu-featured__items flex flex-col gap-3 md:gap-4 w-full">
       <div
         v-if="ingredientsText"
         class="flex items-start justify-between gap-4 md:gap-6"
@@ -63,3 +69,40 @@ function formatMenuPrice(price) {
   return String(price).replace(/\s*kr\.?\s*/gi, '');
 }
 </script>
+
+<style scoped>
+.menu-featured__hero,
+.menu-featured__visual,
+.menu-featured__photo-wrap,
+.menu-featured__photo {
+  overflow: visible;
+}
+
+.menu-featured__title--vegan {
+  font-weight: 300;
+  letter-spacing: 0.01em;
+  text-transform: none;
+}
+
+.menu-featured__visual {
+  margin-top: 0;
+}
+
+.menu-featured__photo-wrap {
+  margin-bottom: 1rem;
+}
+
+.menu-featured__items {
+  margin-top: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .menu-featured__visual {
+    margin-top: -8rem;
+  }
+
+  .menu-featured__items {
+    margin-top: 1.5rem;
+  }
+}
+</style>
