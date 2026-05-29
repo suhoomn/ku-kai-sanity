@@ -1,7 +1,7 @@
 <template>
   <div class="w-full" :class="containerClasses">
     <div
-      class="px-8 md:px-16 max-w-[1480px] mx-auto w-full"
+      class="px-5 sm:px-8 md:px-12 lg:px-16 max-w-[1480px] mx-auto w-full"
       :class="contentPaddingClasses"
     >
       <div
@@ -17,7 +17,10 @@
         <div v-if="componentData.subheader" class="text-lg" v-html="componentData.subheader"></div>
       </div>
 
-      <div v-if="menuHasContent" class="menu-grid grid grid-cols-1 md:grid-cols-2 gap-y-14 md:gap-x-16 md:gap-y-6">
+      <div
+        v-if="menuHasContent"
+        class="menu-grid grid grid-cols-1 md:grid-cols-2 gap-y-12 sm:gap-y-14 md:gap-x-10 md:gap-y-8 lg:gap-x-16 lg:gap-y-6"
+      >
         <article
           v-if="menu.kukai"
           class="menu-grid__featured menu-featured flex flex-col overflow-visible"
@@ -33,7 +36,7 @@
         </article>
 
         <section v-if="menu.toppings.length" class="col-span-1 md:col-span-2 menu-toppings">
-          <div class="menu-toppings__box h-full px-6 py-8 md:px-10 md:py-10" :class="menuBoxClasses">
+          <div class="menu-toppings__box h-full px-5 py-6 sm:px-6 sm:py-8 md:px-10 md:py-10" :class="menuBoxClasses">
             <div class="menu-toppings__inner flex flex-col md:flex-row md:items-start gap-6 md:gap-x-10 md:gap-y-0">
               <h3 class="menu-toppings__title font-headline shrink-0 uppercase mb-0">TOPPINGS</h3>
               <div class="menu-toppings__grid flex-1 w-full min-w-0 gap-y-4 gap-x-8 md:gap-x-12">
@@ -42,8 +45,8 @@
                   :key="`topping-${itemIndex}`"
                   class="menu-toppings__row flex items-baseline justify-between gap-3"
                 >
-                  <span class="menu-item-name text-xl font-bold">{{ item.name }}</span>
-                  <span v-if="item.price" class="menu-toppings__item-price shrink-0 tabular-nums text-xl font-bold">
+                  <span class="menu-item-name text-lg sm:text-xl font-bold">{{ item.name }}</span>
+                  <span v-if="item.price" class="menu-toppings__item-price shrink-0 tabular-nums text-lg sm:text-xl font-bold">
                     {{ formatMenuPrice(item.price) }}
                   </span>
                 </div>
@@ -52,16 +55,16 @@
           </div>
         </section>
 
-        <section v-if="menu.sides.length" class="menu-grid__half min-h-0">
-          <div class="border rounded-lg px-6 py-8 md:px-8 md:py-10 h-full flex flex-col" :class="menuBoxClasses">
-            <h3 class="text-2xl md:text-3xl font-display uppercase tracking-wide text-[#F3EC26] mb-6 md:mb-8">SIDES</h3>
+        <section v-if="menu.sides.length" class="menu-grid__half">
+          <div class="border rounded-lg px-5 py-6 sm:px-6 sm:py-8 md:px-8 md:py-10 h-full flex flex-col" :class="menuBoxClasses">
+            <h3 class="text-xl sm:text-2xl md:text-3xl font-display uppercase tracking-wide text-[#F3EC26] mb-5 sm:mb-6 md:mb-8">SIDES</h3>
             <MenuLineItemList :items="menu.sides" :muted-classes="mutedTextClasses" />
           </div>
         </section>
 
-        <section v-if="menu.drinks.length" class="menu-grid__half min-h-0">
-          <div class="border rounded-lg px-6 py-8 md:px-8 md:py-10 h-full flex flex-col" :class="menuBoxClasses">
-            <h3 class="text-2xl md:text-3xl font-display uppercase tracking-wide text-[#F3EC26] mb-6 md:mb-8">DRINKS</h3>
+        <section v-if="menu.drinks.length" class="menu-grid__half">
+          <div class="border rounded-lg px-5 py-6 sm:px-6 sm:py-8 md:px-8 md:py-10 h-full flex flex-col" :class="menuBoxClasses">
+            <h3 class="text-xl sm:text-2xl md:text-3xl font-display uppercase tracking-wide text-[#F3EC26] mb-5 sm:mb-6 md:mb-8">DRINKS</h3>
             <MenuLineItemList :items="menu.drinks" :muted-classes="mutedTextClasses" />
           </div>
         </section>
@@ -135,7 +138,9 @@ const containerClasses = computed(() => {
 
 const contentPaddingClasses = computed(() => {
   if (menuHasContent.value) {
-    return props.index === 0 ? 'pt-[5.25rem] pb-6 md:pt-[5.75rem] md:pb-10' : 'pb-6 md:pb-10';
+    return props.index === 0
+      ? 'pt-[4.75rem] pb-6 sm:pt-[5rem] md:pt-[5.25rem] lg:pt-[5.75rem] md:pb-8 lg:pb-10'
+      : 'pb-6 md:pb-8 lg:pb-10';
   }
 
   if (props.index === 0) {
@@ -147,20 +152,22 @@ const contentPaddingClasses = computed(() => {
 </script>
 
 <style scoped>
+/* Mobile-first; desktop (lg+) matches tuned full-screen layout */
 .menu-grid {
-  --menu-title-min: 1.5rem;
-  --menu-title-fluid: 3.2vw;
-  --menu-title-max: 4rem;
-  --menu-topping-title-min: 1.5rem;
-  --menu-topping-title-fluid: 2.75vw;
-  --menu-topping-title-max: 2.938rem;
-  --menu-photo-min: 21rem;
-  --menu-photo-max-width: 33rem;
-  --menu-photo-ratio: 585 / 524;
-  --menu-photo-fluid: 36vw;
-  --menu-featured-title-photo-overlap: 20px;
-  --menu-featured-visual-lift: 0rem;
+  --menu-title-min: 1.375rem;
+  --menu-title-fluid: 7vw;
+  --menu-title-max: 2.25rem;
+  --menu-topping-title-min: 1.375rem;
+  --menu-topping-title-fluid: 5vw;
+  --menu-topping-title-max: 2.25rem;
+  --menu-photo-min: 11.5rem;
+  --menu-photo-max-width: 15.5rem;
+  --menu-photo-fluid: 76vw;
+  --menu-featured-body-pull: 52px;
+  --menu-featured-block-offset: 1.5rem;
+  --menu-featured-hero-lift: 0rem;
   --menu-featured-items-gap: 1.25rem;
+  --menu-featured-photo-gap: 0.875rem;
   overflow: visible;
 }
 
@@ -169,34 +176,89 @@ const contentPaddingClasses = computed(() => {
   isolation: isolate;
 }
 
-@media (max-width: 767px) {
+/* Large phones */
+@media (min-width: 480px) {
   .menu-grid {
-    --menu-photo-min: 13rem;
-    --menu-photo-max-width: 17.5rem;
-    --menu-photo-fluid: 72vw;
-    --menu-title-fluid: 5.5vw;
+    --menu-title-max: 2.5rem;
+    --menu-photo-min: 12.5rem;
+    --menu-photo-max-width: 17rem;
+    --menu-photo-fluid: 68vw;
+    --menu-featured-body-pull: 58px;
+    --menu-featured-block-offset: 1.75rem;
+  }
+}
+
+/* Small tablet / large phone landscape */
+@media (min-width: 640px) {
+  .menu-grid {
+    --menu-title-max: 2.75rem;
+    --menu-photo-min: 14rem;
+    --menu-photo-max-width: 19rem;
+    --menu-photo-fluid: 58vw;
+    --menu-featured-body-pull: 62px;
+    --menu-featured-block-offset: 2rem;
+    --menu-featured-items-gap: 1.375rem;
+    --menu-featured-photo-gap: 1rem;
+  }
+}
+
+/* Tablet: two columns */
+@media (min-width: 768px) {
+  .menu-grid {
+    --menu-title-min: 1.5rem;
+    --menu-title-fluid: 3.8vw;
+    --menu-title-max: 3rem;
+    --menu-photo-min: 15rem;
+    --menu-photo-max-width: 22rem;
+    --menu-photo-fluid: 40vw;
+    --menu-featured-body-pull: 66px;
+    --menu-featured-block-offset: 2.25rem;
+    --menu-featured-hero-lift: 3.5rem;
     --menu-featured-items-gap: 1.5rem;
   }
+}
 
+/* Desktop */
+@media (min-width: 1024px) {
+  .menu-grid {
+    --menu-title-fluid: 3.2vw;
+    --menu-title-max: 4rem;
+    --menu-photo-min: 19rem;
+    --menu-photo-max-width: 30rem;
+    --menu-photo-fluid: 34vw;
+    --menu-featured-body-pull: 70px;
+    --menu-featured-block-offset: 40px;
+    --menu-featured-hero-lift: 8rem;
+    --menu-featured-photo-gap: 1rem;
+  }
+}
+
+/* Large desktop */
+@media (min-width: 1280px) {
+  .menu-grid {
+    --menu-photo-min: 21rem;
+    --menu-photo-max-width: 33rem;
+    --menu-photo-fluid: 36vw;
+  }
+}
+
+@media (max-width: 767px) {
   .menu-grid__featured {
-    padding-bottom: 0.5rem;
+    padding-bottom: 0.75rem;
   }
 
   .menu-grid :deep(.menu-featured__hero) {
-    margin-bottom: 0.75rem;
+    margin-bottom: 1rem;
   }
 
   .menu-grid :deep(.menu-featured__items) {
     max-width: none;
-    padding-left: 0.25rem;
-    padding-right: 0.25rem;
+    padding-left: 0;
+    padding-right: 0;
   }
-}
 
-@media (min-width: 768px) {
-  .menu-grid {
-    --menu-featured-visual-lift: 8rem;
-    --menu-featured-items-gap: 1.5rem;
+  .menu-toppings__inner {
+    flex-direction: column;
   }
 }
 
@@ -206,28 +268,31 @@ const contentPaddingClasses = computed(() => {
   flex-direction: column;
   align-items: center;
   width: 100%;
+  margin-top: calc(var(--menu-featured-block-offset) - var(--menu-featured-hero-lift));
   margin-bottom: 0.25rem;
-  overflow: visible;
-}
-
-.menu-grid :deep(.menu-featured__visual) {
-  width: 100%;
-  margin-top: calc(-1 * var(--menu-featured-visual-lift));
-  margin-bottom: 0;
   overflow: visible;
 }
 
 .menu-grid :deep(.menu-featured__title) {
   position: relative;
   z-index: 3;
+  flex-shrink: 0;
   text-align: center;
   font-size: clamp(var(--menu-title-min), var(--menu-title-fluid), var(--menu-title-max));
   line-height: 0.95;
   margin: 0;
-  padding-bottom: 0.125rem;
+  padding-bottom: 0;
   text-shadow:
     0 0 18px #000,
     0 2px 8px rgba(0, 0, 0, 0.85);
+}
+
+/* Photo + ingredients: pull up toward fixed title (no extra gap on title) */
+.menu-grid :deep(.menu-featured__below-title) {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  margin-top: calc(-1 * var(--menu-featured-body-pull));
 }
 
 .menu-grid :deep(.menu-featured__title--kukai) {
@@ -248,8 +313,8 @@ const contentPaddingClasses = computed(() => {
   display: flex;
   justify-content: center;
   width: 100%;
-  margin-top: calc(-1 * var(--menu-featured-title-photo-overlap));
-  margin-bottom: 1rem;
+  margin-top: 0;
+  margin-bottom: var(--menu-featured-photo-gap);
   overflow: visible;
 }
 
