@@ -116,23 +116,7 @@ function formatMenuPrice(price) {
 }
 
 .menu-featured__promo {
-  position: absolute;
-  left: 0;
-  top: 0;
-  z-index: 4;
-  margin: 0;
-  padding: 0;
-  color: #f3ec26;
-  font-weight: 300;
-  line-height: 1.1;
-  letter-spacing: 0.02em;
-  white-space: nowrap;
-  pointer-events: none;
-  text-align: left;
-  text-shadow:
-    0 0 12px #000,
-    0 2px 6px rgba(0, 0, 0, 0.85);
-  transform: translateY(calc(-100% - 0.15em));
+  transform: translateY(calc(-100% - var(--menu-promo-gap, 0.25em)));
 }
 
 .menu-featured__title--vegan {
