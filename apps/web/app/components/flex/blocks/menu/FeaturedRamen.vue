@@ -1,6 +1,9 @@
 <template>
   <div class="menu-featured__hero w-full">
-    <div class="menu-featured__title-wrap w-full flex justify-center">
+    <div
+      class="menu-featured__title-wrap w-full"
+      :class="{ 'menu-featured__title-wrap--vegan': variant === 'vegan' }"
+    >
       <div class="menu-featured__title-anchor">
         <p
           v-if="ramen.promoLabel"
@@ -94,10 +97,14 @@ function formatMenuPrice(price) {
   overflow: visible;
 }
 
+.menu-featured__title-wrap {
+  width: 100%;
+}
+
 .menu-featured__title-anchor {
   position: relative;
   display: inline-block;
-  max-width: 100%;
+  max-width: min(100%, 28rem);
 }
 
 .menu-featured__title {
@@ -132,6 +139,7 @@ function formatMenuPrice(price) {
   font-weight: 300;
   letter-spacing: 0.01em;
   text-transform: none;
+  white-space: nowrap;
 }
 
 /* Overlap + spacing driven by MenuBlock CSS variables via :deep */
