@@ -7,7 +7,7 @@
       <div class="menu-featured__title-anchor">
         <p
           v-if="ramen.promoLabel"
-          class="menu-featured__promo font-yuji"
+          class="menu-featured__promo"
           aria-hidden="true"
         >
           {{ ramen.promoLabel }}

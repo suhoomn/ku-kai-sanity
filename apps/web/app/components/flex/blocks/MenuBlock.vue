@@ -325,7 +325,7 @@ const contentPaddingClasses = computed(() => {
   z-index: 4;
   margin: 0;
   padding: 0.2em 0.55em 0.15em;
-  font-family: 'Yuji Boku', serif;
+  font-family: var(--theme-font_paragraph_font_family, 'Roboto', sans-serif);
   font-size: clamp(1.0625rem, 2.8vw, 1.4375rem);
   font-weight: 400;
   line-height: 1.15;
