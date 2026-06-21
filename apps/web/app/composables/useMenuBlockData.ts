@@ -9,6 +9,7 @@ export type MenuFeatured = {
   ingredients: string[]
   addOnName?: string
   addOnPrice?: string
+  promoLabel?: string
 }
 
 export type MenuLineItem = {
@@ -162,6 +163,7 @@ function featuredFromStructured(raw: Record<string, unknown> | null | undefined,
     ingredients: (raw.ingredients as string[]) || [],
     addOnName: (raw.addOnName as string)?.trim() || undefined,
     addOnPrice: (raw.addOnPrice as string)?.trim() || undefined,
+    promoLabel: (raw.promoLabel as string)?.trim() || undefined,
   }
 }
 

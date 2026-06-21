@@ -12,6 +12,13 @@ export const menuFeaturedRamen = {
       description: 'Shown above the photo (e.g. KU-KAI RAMEN)',
     },
     {
+      name: 'promoLabel',
+      title: 'Promo label (optional)',
+      type: 'string',
+      description:
+        'Short badge shown above-left of the title (e.g. “Limited time!” / “期間限定!”). Leave empty to hide.',
+    },
+    {
       name: 'image',
       title: 'Photo',
       type: 'image',

@@ -1,15 +1,26 @@
 <template>
   <div class="menu-featured__hero w-full">
-    <h3
-      class="menu-featured__title text-center text-[#F3EC26] w-full"
-      :class="
-        variant === 'vegan'
-          ? 'menu-featured__title--vegan font-yuji'
-          : 'menu-featured__title--kukai font-display'
-      "
-    >
-      {{ ramen.title }}
-    </h3>
+    <div class="menu-featured__title-wrap w-full flex justify-center">
+      <div class="menu-featured__title-anchor">
+        <p
+          v-if="ramen.promoLabel"
+          class="menu-featured__promo font-yuji"
+          aria-hidden="true"
+        >
+          {{ ramen.promoLabel }}
+        </p>
+        <h3
+          class="menu-featured__title text-center text-[#F3EC26]"
+          :class="
+            variant === 'vegan'
+              ? 'menu-featured__title--vegan font-yuji'
+              : 'menu-featured__title--kukai font-display'
+          "
+        >
+          {{ ramen.title }}
+        </h3>
+      </div>
+    </div>
 
     <div class="menu-featured__below-title w-full">
       <div v-if="ramen.image" class="menu-featured__photo-wrap w-full flex justify-center">
@@ -76,6 +87,43 @@ function formatMenuPrice(price) {
 .menu-featured__photo-wrap,
 .menu-featured__photo {
   overflow: visible;
+}
+
+.menu-featured__title-wrap,
+.menu-featured__title-anchor {
+  overflow: visible;
+}
+
+.menu-featured__title-anchor {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+}
+
+.menu-featured__title {
+  position: relative;
+  z-index: 3;
+  margin: 0;
+  width: 100%;
+}
+
+.menu-featured__promo {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 4;
+  margin: 0;
+  padding: 0;
+  color: #f3ec26;
+  font-weight: 300;
+  line-height: 1.1;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  pointer-events: none;
+  text-shadow:
+    0 0 12px #000,
+    0 2px 6px rgba(0, 0, 0, 0.85);
+  transform: translate(calc(-100% - 0.35rem), -0.15em);
 }
 
 .menu-featured__title--vegan {

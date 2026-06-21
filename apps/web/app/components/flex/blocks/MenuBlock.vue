@@ -273,6 +273,16 @@ const contentPaddingClasses = computed(() => {
   overflow: visible;
 }
 
+.menu-grid :deep(.menu-featured__title-wrap) {
+  overflow: visible;
+}
+
+.menu-grid :deep(.menu-featured__title-anchor) {
+  position: relative;
+  display: inline-block;
+  max-width: min(100%, 28rem);
+}
+
 .menu-grid :deep(.menu-featured__title) {
   position: relative;
   z-index: 3;
@@ -282,9 +292,44 @@ const contentPaddingClasses = computed(() => {
   line-height: 0.95;
   margin: 0;
   padding-bottom: 0;
+  width: auto;
   text-shadow:
     0 0 18px #000,
     0 2px 8px rgba(0, 0, 0, 0.85);
+}
+
+.menu-grid :deep(.menu-featured__promo) {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 4;
+  margin: 0;
+  font-family: 'Yuji Boku', serif;
+  font-size: clamp(0.8125rem, 2.2vw, 1.125rem);
+  font-weight: 300;
+  line-height: 1.1;
+  letter-spacing: 0.02em;
+  color: #f3ec26;
+  white-space: nowrap;
+  pointer-events: none;
+  text-shadow:
+    0 0 12px #000,
+    0 2px 6px rgba(0, 0, 0, 0.85);
+  transform: translate(calc(-100% - 0.35rem), -0.15em);
+}
+
+@media (max-width: 639px) {
+  .menu-grid :deep(.menu-featured__promo) {
+    font-size: clamp(0.75rem, 3.2vw, 0.9375rem);
+    transform: translate(calc(-100% - 0.25rem), -0.1em);
+  }
+}
+
+@media (min-width: 1024px) {
+  .menu-grid :deep(.menu-featured__promo) {
+    font-size: 1.125rem;
+    transform: translate(calc(-100% - 0.5rem), -0.2em);
+  }
 }
 
 /* Photo + ingredients: pull up toward fixed title (no extra gap on title) */
