@@ -10,7 +10,7 @@
           {{ ramen.promoLabel }}
         </p>
         <h3
-          class="menu-featured__title text-center text-[#F3EC26]"
+          class="menu-featured__title text-[#F3EC26]"
           :class="
             variant === 'vegan'
               ? 'menu-featured__title--vegan font-yuji'
@@ -104,7 +104,8 @@ function formatMenuPrice(price) {
   position: relative;
   z-index: 3;
   margin: 0;
-  width: 100%;
+  width: auto;
+  text-align: left;
 }
 
 .menu-featured__promo {
@@ -120,10 +121,11 @@ function formatMenuPrice(price) {
   letter-spacing: 0.02em;
   white-space: nowrap;
   pointer-events: none;
+  text-align: left;
   text-shadow:
     0 0 12px #000,
     0 2px 6px rgba(0, 0, 0, 0.85);
-  transform: translate(calc(-100% - 0.35rem), -0.15em);
+  transform: translateY(calc(-100% - 0.15em));
 }
 
 .menu-featured__title--vegan {

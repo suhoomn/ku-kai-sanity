@@ -287,7 +287,7 @@ const contentPaddingClasses = computed(() => {
   position: relative;
   z-index: 3;
   flex-shrink: 0;
-  text-align: center;
+  text-align: left;
   font-size: clamp(var(--menu-title-min), var(--menu-title-fluid), var(--menu-title-max));
   line-height: 0.95;
   margin: 0;
@@ -312,23 +312,24 @@ const contentPaddingClasses = computed(() => {
   color: #f3ec26;
   white-space: nowrap;
   pointer-events: none;
+  text-align: left;
   text-shadow:
     0 0 12px #000,
     0 2px 6px rgba(0, 0, 0, 0.85);
-  transform: translate(calc(-100% - 0.35rem), -0.15em);
+  transform: translateY(calc(-100% - var(--menu-promo-gap, 0.15em)));
 }
 
 @media (max-width: 639px) {
   .menu-grid :deep(.menu-featured__promo) {
     font-size: clamp(0.75rem, 3.2vw, 0.9375rem);
-    transform: translate(calc(-100% - 0.25rem), -0.1em);
+    --menu-promo-gap: 0.1em;
   }
 }
 
 @media (min-width: 1024px) {
   .menu-grid :deep(.menu-featured__promo) {
     font-size: 1.125rem;
-    transform: translate(calc(-100% - 0.5rem), -0.2em);
+    --menu-promo-gap: 0.2em;
   }
 }
 
