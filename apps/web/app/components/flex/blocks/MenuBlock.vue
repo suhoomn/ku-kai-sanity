@@ -324,16 +324,35 @@ const contentPaddingClasses = computed(() => {
   top: 0;
   z-index: 4;
   margin: 0;
-  padding: 0.2em 0.55em 0.15em;
   font-family: var(--theme-font_paragraph_font_family, 'Roboto', sans-serif);
   font-size: clamp(1.0625rem, 2.8vw, 1.4375rem);
   font-weight: 400;
   line-height: 1.15;
-  letter-spacing: 0.06em;
-  color: #00ffff;
+  letter-spacing: 0.02em;
   white-space: nowrap;
   pointer-events: none;
   text-align: left;
+  transform: translateY(calc(-100% - var(--menu-promo-gap, 0.3em)));
+}
+
+/* Generic promo: text only, same size/position as summer badge */
+.menu-grid :deep(.menu-featured__promo--plain) {
+  padding: 0;
+  color: #f3ec26;
+  background: none;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  text-shadow:
+    0 0 12px #000,
+    0 2px 6px rgba(0, 0, 0, 0.85);
+}
+
+/* Seasonal summer badge (Hiyashi / limited) */
+.menu-grid :deep(.menu-featured__promo--summer) {
+  padding: 0.2em 0.55em 0.15em;
+  letter-spacing: 0.06em;
+  color: #00ffff;
   background: rgba(0, 255, 255, 0.14);
   border: 1px solid rgba(0, 255, 255, 0.85);
   border-radius: 0.2em;
@@ -344,23 +363,28 @@ const contentPaddingClasses = computed(() => {
     0 0 4.23px #ffffff,
     0 0 12px rgba(255, 255, 255, 0.85),
     0 0 22px rgba(0, 255, 255, 0.65);
-  transform: translateY(calc(-100% - var(--menu-promo-gap, 0.3em)));
 }
 
 @media (max-width: 639px) {
   .menu-grid :deep(.menu-featured__promo) {
     font-size: clamp(1rem, 4vw, 1.1875rem);
+    --menu-promo-gap: 0.22em;
+  }
+
+  .menu-grid :deep(.menu-featured__promo--summer) {
     padding: 0.18em 0.45em 0.12em;
     letter-spacing: 0.05em;
-    --menu-promo-gap: 0.22em;
   }
 }
 
 @media (min-width: 1024px) {
   .menu-grid :deep(.menu-featured__promo) {
     font-size: 1.4375rem;
-    padding: 0.22em 0.6em 0.16em;
     --menu-promo-gap: 0.35em;
+  }
+
+  .menu-grid :deep(.menu-featured__promo--summer) {
+    padding: 0.22em 0.6em 0.16em;
   }
 }
 
@@ -386,12 +410,14 @@ const contentPaddingClasses = computed(() => {
   font-weight: 300;
   letter-spacing: 0.01em;
   text-transform: none;
-  white-space: nowrap;
   text-align: center;
-  max-width: none;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  max-width: 100%;
+  /* Shrink toward ~18 chars first; wrap only if still too long */
   font-size: clamp(
     0.8125rem,
-    calc(100cqw / 13),
+    calc(100cqw / 18),
     var(--menu-title-max)
   );
 }

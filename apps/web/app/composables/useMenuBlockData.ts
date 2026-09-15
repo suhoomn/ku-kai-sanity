@@ -2,6 +2,8 @@
  * Normalizes menuBlock CMS data (flat fields or legacy menuSections) for MenuBlock.vue.
  */
 
+export type MenuPromoStyle = 'plain' | 'summer'
+
 export type MenuFeatured = {
   title: string
   image: unknown
@@ -10,6 +12,7 @@ export type MenuFeatured = {
   addOnName?: string
   addOnPrice?: string
   promoLabel?: string
+  promoStyle?: MenuPromoStyle
 }
 
 export type MenuLineItem = {
@@ -164,7 +167,12 @@ function featuredFromStructured(raw: Record<string, unknown> | null | undefined,
     addOnName: (raw.addOnName as string)?.trim() || undefined,
     addOnPrice: (raw.addOnPrice as string)?.trim() || undefined,
     promoLabel: (raw.promoLabel as string)?.trim() || undefined,
+    promoStyle: normalizePromoStyle(raw.promoStyle),
   }
+}
+
+function normalizePromoStyle(value: unknown): MenuPromoStyle | undefined {
+  return value === 'summer' || value === 'plain' ? value : undefined
 }
 
 function lineItemsFromStructured(list: unknown): MenuLineItem[] {

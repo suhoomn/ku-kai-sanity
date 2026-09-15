@@ -16,7 +16,22 @@ export const menuFeaturedRamen = {
       title: 'Promo label (optional)',
       type: 'string',
       description:
-        'Short badge shown above-left of the title (e.g. “Limited time!” / “期間限定!”). Leave empty to hide.',
+        'Short text above-left of the title (e.g. “SPICY”, “夏限定!”). Leave empty to hide.',
+    },
+    {
+      name: 'promoStyle',
+      title: 'Promo style',
+      type: 'string',
+      description: 'Visual style for the promo label. Only used when Promo label is set.',
+      options: {
+        list: [
+          {title: 'Plain (text only)', value: 'plain'},
+          {title: 'Summer badge (cyan)', value: 'summer'},
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'plain',
+      hidden: ({parent}: {parent?: {promoLabel?: string}}) => !parent?.promoLabel?.trim(),
     },
     {
       name: 'image',

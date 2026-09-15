@@ -8,6 +8,7 @@
         <p
           v-if="ramen.promoLabel"
           class="menu-featured__promo"
+          :class="promoClass"
           aria-hidden="true"
         >
           {{ ramen.promoLabel }}
@@ -76,6 +77,11 @@ const ingredientsText = computed(() =>
   (props.ramen.ingredients || []).filter(Boolean).join(', '),
 );
 
+const promoClass = computed(() => {
+  const style = props.ramen.promoStyle === 'summer' ? 'summer' : 'plain';
+  return `menu-featured__promo--${style}`;
+});
+
 function formatMenuPrice(price) {
   if (!price) {
     return '';
@@ -123,7 +129,6 @@ function formatMenuPrice(price) {
   font-weight: 300;
   letter-spacing: 0.01em;
   text-transform: none;
-  white-space: nowrap;
 }
 
 /* Overlap + spacing driven by MenuBlock CSS variables via :deep */
